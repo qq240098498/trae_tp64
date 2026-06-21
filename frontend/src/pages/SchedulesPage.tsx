@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { Table, Button, Modal, Form, Select, InputNumber, DatePicker, TimePicker, Tag, Space, Popconfirm, message, Divider } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, CheckCircleOutlined, TeamOutlined } from '@ant-design/icons';
+import { useState, useEffect, useMemo } from 'react';
+import { Table, Button, Modal, Form, Select, InputNumber, DatePicker, TimePicker, Tag, Space, Popconfirm, message, Divider, Tooltip } from 'antd';
+import { PlusOutlined, EditOutlined, DeleteOutlined, CheckCircleOutlined, TeamOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import api from '../api';
 
@@ -32,6 +32,23 @@ export default function SchedulesPage() {
   };
 
   useEffect(() => { loadData(); }, []);
+
+  const selectedClassroomCapacity = useMemo(() => {
+    const classroomId = form.getFieldValue('classroom_id');
+    if (!classroomId) return null;
+    const cls = classrooms.find(c => c.id === classroomId);
+    return cls?.capacity ?? null;
+  }, [form, classrooms]);
+
+  const handleClassroomChange = (classroomId: number) => {
+    const cls = classrooms.find(c => c.id === classroomId);
+    if (cls) {
+      const currentMax = form.getFieldValue('max_students');
+      if (currentMax === undefined || currentMax === null || currentMax > cls.capacity) {
+        form.setFieldsValue({ max_students: cls.capacity });
+      }
+    }
+  };
 
   const handleSubmit = async (values: any) => {
     try {
@@ -170,8 +187,12 @@ export default function SchedulesPage() {
             </Select>
           </Form.Item>
           <Form.Item name="classroom_id" label="教室" rules={[{ required: true }]}>
-            <Select>
-              {classrooms.map(r => <Select.Option key={r.id} value={r.id}>{r.name} (容量{r.capacity})</Select.Option>)}
+            <Select onChange={handleClassroomChange} placeholder="请选择教室">
+              {classrooms.map(r => (
+                <Select.Option key={r.id} value={r.id}>
+                  {r.name} <Tag color="blue" style={{ marginLeft: 8 }}>容量{r.capacity}人</Tag>
+                </Select.Option>
+              ))}
             </Select>
           </Form.Item>
           <Form.Item name="date" label="日期" rules={[{ required: true }]}>
@@ -185,8 +206,39 @@ export default function SchedulesPage() {
               <TimePicker format="HH:mm" style={{ width: '100%' }} />
             </Form.Item>
           </Space>
-          <Form.Item name="max_students" label="人数上限" rules={[{ required: true }]}>
-            <InputNumber min={1} style={{ width: '100%' }} />
+          <Form.Item
+            name="max_students"
+            label={
+              <Space>
+                人数上限
+                {selectedClassroomCapacity !== null && (
+                  <Tooltip title={`所选教室最大容量为 ${selectedClassroomCapacity} 人`}>
+                    <Tag color="info">教室容量：{selectedClassroomCapacity}人</Tag>
+                  </Tooltip>
+                )}
+              </Space>
+            }
+            rules={[
+              { required: true, message: '请输入人数上限' },
+              {
+                validator: (_, value) => {
+                  if (selectedClassroomCapacity !== null && value > selectedClassroomCapacity) {
+                    return Promise.reject(new Error(`人数上限不能超过教室容量(${selectedClassroomCapacity}人)`));
+                  }
+                  if (value < 1) {
+                    return Promise.reject(new Error('人数上限至少为1'));
+                  }
+                  return Promise.resolve();
+                }
+              }
+            ]}
+          >
+            <InputNumber
+              min={1}
+              max={selectedClassroomCapacity ?? undefined}
+              style={{ width: '100%' }}
+              placeholder={selectedClassroomCapacity ? `最大值：${selectedClassroomCapacity}` : '请先选择教室'}
+            />
           </Form.Item>
         </Form>
       </Modal>

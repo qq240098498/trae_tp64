@@ -100,7 +100,17 @@ router.post('/', (req: Request, res: Response) => {
   }
 
   const classroom = tables.classrooms.get(Number(classroom_id));
-  const finalMaxStudents = Math.min(Number(max_students) || 10, classroom?.capacity || 10);
+  if (!classroom) {
+    return res.json({ code: 400, message: '教室不存在' });
+  }
+
+  const inputMaxStudents = Number(max_students);
+  if (inputMaxStudents > classroom.capacity) {
+    return res.json({ code: 400, message: `人数上限(${inputMaxStudents})超过教室容量(${classroom.capacity})` });
+  }
+  if (inputMaxStudents < 1) {
+    return res.json({ code: 400, message: '人数上限至少为1' });
+  }
 
   const schedule = tables.schedules.insert({
     course_id: Number(course_id),
@@ -109,7 +119,7 @@ router.post('/', (req: Request, res: Response) => {
     date,
     start_time,
     end_time,
-    max_students: finalMaxStudents,
+    max_students: inputMaxStudents,
   });
 
   res.json({ code: 0, data: { id: schedule.id } });
@@ -145,7 +155,23 @@ router.put('/:id', (req: Request, res: Response) => {
   if (date !== undefined) data.date = date;
   if (start_time !== undefined) data.start_time = start_time;
   if (end_time !== undefined) data.end_time = end_time;
-  if (max_students !== undefined) data.max_students = Number(max_students);
+  if (max_students !== undefined) {
+    const clsId = classroom_id !== undefined ? Number(classroom_id) : (tables.schedules.get(id)?.classroom_id);
+    if (clsId !== undefined) {
+      const cls = tables.classrooms.get(clsId);
+      if (!cls) {
+        return res.json({ code: 400, message: '教室不存在' });
+      }
+      const inputMax = Number(max_students);
+      if (inputMax > cls.capacity) {
+        return res.json({ code: 400, message: `人数上限(${inputMax})超过教室容量(${cls.capacity})` });
+      }
+      if (inputMax < 1) {
+        return res.json({ code: 400, message: '人数上限至少为1' });
+      }
+      data.max_students = inputMax;
+    }
+  }
   if (status !== undefined) data.status = status;
 
   tables.schedules.update(id, data);
