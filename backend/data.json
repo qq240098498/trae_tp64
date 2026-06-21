@@ -185,7 +185,32 @@
       "id": 5
     }
   ],
-  "schedules": [],
+  "schedules": [
+    {
+      "status": "scheduled",
+      "course_id": 1,
+      "teacher_id": 1,
+      "classroom_id": 1,
+      "date": "2026-06-22",
+      "start_time": "10:00",
+      "end_time": "12:00",
+      "max_students": 10,
+      "id": 2,
+      "created_at": "2026-06-21 15:17:53"
+    },
+    {
+      "status": "scheduled",
+      "course_id": 3,
+      "teacher_id": 2,
+      "classroom_id": 2,
+      "date": "2026-06-25",
+      "start_time": "14:00",
+      "end_time": "16:00",
+      "max_students": 8,
+      "id": 3,
+      "created_at": "2026-06-21 15:26:08"
+    }
+  ],
   "students": [
     {
       "name": "赵小红",
@@ -398,7 +423,7 @@
     "courses": 11,
     "teachers": 6,
     "classrooms": 6,
-    "schedules": 1,
+    "schedules": 4,
     "students": 6,
     "enrollments": 1,
     "attendances": 1,

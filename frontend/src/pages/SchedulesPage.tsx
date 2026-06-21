@@ -26,7 +26,7 @@ export default function SchedulesPage() {
   const [selectedMaterial, setSelectedMaterial] = useState<any>(null);
 
   const loadData = async () => {
-    const [s, c, t, rm, m, mc] = await Promise.all([
+    const results = await Promise.allSettled([
       api.get('/schedules'),
       api.get('/courses'),
       api.get('/teachers'),
@@ -34,12 +34,12 @@ export default function SchedulesPage() {
       api.get('/materials'),
       api.get('/materials/categories'),
     ]);
-    setList(s.data || []);
-    setCourses(c.data || []);
-    setTeachers(t.data || []);
-    setClassrooms(rm.data || []);
-    setMaterials(m.data || []);
-    setMaterialCategories(mc.data || []);
+    if (results[0].status === 'fulfilled') setList(results[0].value.data || []);
+    if (results[1].status === 'fulfilled') setCourses(results[1].value.data || []);
+    if (results[2].status === 'fulfilled') setTeachers(results[2].value.data || []);
+    if (results[3].status === 'fulfilled') setClassrooms(results[3].value.data || []);
+    if (results[4].status === 'fulfilled') setMaterials(results[4].value.data || []);
+    if (results[5].status === 'fulfilled') setMaterialCategories(results[5].value.data || []);
   };
 
   useEffect(() => { loadData(); }, []);
@@ -70,11 +70,21 @@ export default function SchedulesPage() {
         end_time: values.end_time.format('HH:mm'),
       };
       if (editing) {
-        await api.put(`/schedules/${editing.id}`, { ...data, status: editing.status });
-        message.success('更新成功');
+        const res = await api.put(`/schedules/${editing.id}`, { ...data, status: editing.status });
+        if (res.code === 0) {
+          message.success('更新成功');
+        } else {
+          message.error(res.message);
+          return;
+        }
       } else {
-        await api.post('/schedules', data);
-        message.success('添加成功');
+        const res = await api.post('/schedules', data);
+        if (res.code === 0) {
+          message.success('添加成功');
+        } else {
+          message.error(res.message);
+          return;
+        }
       }
       setModalOpen(false);
       setEditing(null);
@@ -356,6 +366,7 @@ export default function SchedulesPage() {
         onCancel={() => { setUsageModalOpen(false); setFilterCategory(undefined); setSelectedMaterial(null); }}
         footer={null}
         width={760}
+        destroyOnHidden
       >
         {currentSchedule && (
           <div>
