@@ -1,0 +1,244 @@
+{
+  "courses": [
+    {
+      "name": "水彩画入门",
+      "category": "水彩",
+      "mode": "single",
+      "price": 180,
+      "single_count": 1,
+      "semester_weeks": 0,
+      "description": "单次体验课，零基础可学",
+      "id": 1,
+      "created_at": "2026-06-21 10:51:23"
+    },
+    {
+      "name": "水彩进阶班",
+      "category": "水彩",
+      "mode": "semester",
+      "price": 2800,
+      "single_count": 0,
+      "semester_weeks": 12,
+      "description": "12周系统学习，每周2课时",
+      "id": 2,
+      "created_at": "2026-06-21 10:51:23"
+    },
+    {
+      "name": "油画基础",
+      "category": "油画",
+      "mode": "single",
+      "price": 220,
+      "single_count": 1,
+      "semester_weeks": 0,
+      "description": "单次油画体验",
+      "id": 3,
+      "created_at": "2026-06-21 10:51:23"
+    },
+    {
+      "name": "油画系统课",
+      "category": "油画",
+      "mode": "semester",
+      "price": 3600,
+      "single_count": 0,
+      "semester_weeks": 16,
+      "description": "16周系统课程",
+      "id": 4,
+      "created_at": "2026-06-21 10:51:23"
+    },
+    {
+      "name": "书法入门",
+      "category": "书法",
+      "mode": "single",
+      "price": 150,
+      "single_count": 1,
+      "semester_weeks": 0,
+      "description": "软笔书法单次体验",
+      "id": 5,
+      "created_at": "2026-06-21 10:51:23"
+    },
+    {
+      "name": "书法学期班",
+      "category": "书法",
+      "mode": "semester",
+      "price": 2400,
+      "single_count": 0,
+      "semester_weeks": 12,
+      "description": "12周书法系统学习",
+      "id": 6,
+      "created_at": "2026-06-21 10:51:23"
+    },
+    {
+      "name": "陶艺体验",
+      "category": "陶艺",
+      "mode": "single",
+      "price": 200,
+      "single_count": 1,
+      "semester_weeks": 0,
+      "description": "拉坯+上釉体验",
+      "id": 7,
+      "created_at": "2026-06-21 10:51:23"
+    },
+    {
+      "name": "陶艺系统课",
+      "category": "陶艺",
+      "mode": "semester",
+      "price": 3200,
+      "single_count": 0,
+      "semester_weeks": 10,
+      "description": "10周陶艺课程",
+      "id": 8,
+      "created_at": "2026-06-21 10:51:23"
+    },
+    {
+      "name": "皮具手作",
+      "category": "皮具",
+      "mode": "single",
+      "price": 280,
+      "single_count": 1,
+      "semester_weeks": 0,
+      "description": "皮具制作单次体验",
+      "id": 9,
+      "created_at": "2026-06-21 10:51:23"
+    },
+    {
+      "name": "皮具进阶班",
+      "category": "皮具",
+      "mode": "semester",
+      "price": 4000,
+      "single_count": 0,
+      "semester_weeks": 8,
+      "description": "8周皮具制作系统课",
+      "id": 10,
+      "created_at": "2026-06-21 10:51:23"
+    }
+  ],
+  "teachers": [
+    {
+      "name": "李明",
+      "phone": "13800138001",
+      "hourly_rate": 200,
+      "specialty": "水彩画",
+      "id": 1,
+      "created_at": "2026-06-21 10:51:23"
+    },
+    {
+      "name": "王芳",
+      "phone": "13800138002",
+      "hourly_rate": 250,
+      "specialty": "油画",
+      "id": 2,
+      "created_at": "2026-06-21 10:51:23"
+    },
+    {
+      "name": "张建国",
+      "phone": "13800138003",
+      "hourly_rate": 180,
+      "specialty": "书法",
+      "id": 3,
+      "created_at": "2026-06-21 10:51:23"
+    },
+    {
+      "name": "陈思",
+      "phone": "13800138004",
+      "hourly_rate": 220,
+      "specialty": "陶艺",
+      "id": 4,
+      "created_at": "2026-06-21 10:51:23"
+    },
+    {
+      "name": "刘洋",
+      "phone": "13800138005",
+      "hourly_rate": 280,
+      "specialty": "皮具制作",
+      "id": 5,
+      "created_at": "2026-06-21 10:51:23"
+    }
+  ],
+  "classrooms": [
+    {
+      "name": "绘画教室A",
+      "capacity": 15,
+      "equipment": "画架、画板、投影设备",
+      "id": 1
+    },
+    {
+      "name": "绘画教室B",
+      "capacity": 12,
+      "equipment": "画架、画板",
+      "id": 2
+    },
+    {
+      "name": "书法教室",
+      "capacity": 20,
+      "equipment": "书画桌、毛毡",
+      "id": 3
+    },
+    {
+      "name": "陶艺教室",
+      "capacity": 10,
+      "equipment": "拉坯机、窑炉",
+      "id": 4
+    },
+    {
+      "name": "皮具工作室",
+      "capacity": 8,
+      "equipment": "皮具工具、缝纫机",
+      "id": 5
+    }
+  ],
+  "schedules": [],
+  "students": [
+    {
+      "name": "赵小红",
+      "phone": "13900139001",
+      "gender": "女",
+      "note": "零基础，对水彩感兴趣",
+      "id": 1,
+      "created_at": "2026-06-21 10:51:23"
+    },
+    {
+      "name": "钱伟",
+      "phone": "13900139002",
+      "gender": "男",
+      "note": "有一定油画基础",
+      "id": 2,
+      "created_at": "2026-06-21 10:51:23"
+    },
+    {
+      "name": "孙丽",
+      "phone": "13900139003",
+      "gender": "女",
+      "note": "想学书法修身养性",
+      "id": 3,
+      "created_at": "2026-06-21 10:51:23"
+    },
+    {
+      "name": "周强",
+      "phone": "13900139004",
+      "gender": "男",
+      "note": "陶艺爱好者",
+      "id": 4,
+      "created_at": "2026-06-21 10:51:23"
+    },
+    {
+      "name": "吴敏",
+      "phone": "13900139005",
+      "gender": "女",
+      "note": "喜欢手工皮具",
+      "id": 5,
+      "created_at": "2026-06-21 10:51:23"
+    }
+  ],
+  "enrollments": [],
+  "attendances": [],
+  "teacher_payments": [],
+  "nextId": {
+    "courses": 11,
+    "teachers": 6,
+    "classrooms": 6,
+    "schedules": 1,
+    "students": 6,
+    "enrollments": 1,
+    "attendances": 1,
+    "teacher_payments": 1
+  }
+}
