@@ -111,6 +111,19 @@ export interface MaterialUsage {
   created_at: string;
 }
 
+export interface StudentWork {
+  id: number;
+  student_id: number;
+  course_id: number;
+  schedule_id?: number;
+  title: string;
+  description?: string;
+  image_url: string;
+  is_excellent: boolean;
+  work_date: string;
+  created_at: string;
+}
+
 interface Database {
   courses: Course[];
   teachers: Teacher[];
@@ -122,6 +135,7 @@ interface Database {
   teacher_payments: TeacherPayment[];
   materials: Material[];
   material_usages: MaterialUsage[];
+  student_works: StudentWork[];
   nextId: { [key: string]: number };
 }
 
@@ -133,7 +147,17 @@ function loadDatabase(): Database {
   if (fs.existsSync(dbPath)) {
     try {
       const data = fs.readFileSync(dbPath, 'utf-8');
-      return JSON.parse(data);
+      const parsed = JSON.parse(data);
+      const emptyDb = createEmptyDatabase();
+      return {
+        ...emptyDb,
+        ...parsed,
+        student_works: parsed.student_works || [],
+        nextId: {
+          ...emptyDb.nextId,
+          ...parsed.nextId,
+        }
+      };
     } catch (e) {
       console.error('加载数据库失败，使用空数据库');
     }
@@ -153,6 +177,7 @@ function createEmptyDatabase(): Database {
     teacher_payments: [],
     materials: [],
     material_usages: [],
+    student_works: [],
     nextId: {
       courses: 1,
       teachers: 1,
@@ -164,6 +189,7 @@ function createEmptyDatabase(): Database {
       teacher_payments: 1,
       materials: 1,
       material_usages: 1,
+      student_works: 1,
     },
   };
 }
@@ -560,6 +586,44 @@ export const tables = {
       db.material_usages.splice(idx, 1);
       saveDatabase();
       return true;
+    },
+  },
+  student_works: {
+    all: (filter?: (sw: StudentWork) => boolean): StudentWork[] => {
+      let result = [...db.student_works];
+      if (filter) result = result.filter(filter);
+      return result.sort((a, b) => (a.work_date < b.work_date ? 1 : a.work_date > b.work_date ? -1 : b.id - a.id));
+    },
+    get: (id: number): StudentWork | undefined => db.student_works.find(sw => sw.id === id),
+    findByStudent: (studentId: number): StudentWork[] =>
+      db.student_works.filter(sw => sw.student_id === studentId).sort((a, b) => b.id - a.id),
+    findByCourse: (courseId: number): StudentWork[] =>
+      db.student_works.filter(sw => sw.course_id === courseId).sort((a, b) => b.id - a.id),
+    findExcellent: (): StudentWork[] =>
+      db.student_works.filter(sw => sw.is_excellent).sort((a, b) => b.id - a.id),
+    insert: (data: Omit<StudentWork, 'id' | 'created_at' | 'is_excellent'> & { is_excellent?: boolean }): StudentWork => {
+      const work: StudentWork = { is_excellent: false, ...data, id: nextId('student_works'), created_at: now() };
+      db.student_works.push(work);
+      saveDatabase();
+      return work;
+    },
+    update: (id: number, data: Partial<StudentWork>): boolean => {
+      const idx = db.student_works.findIndex(sw => sw.id === id);
+      if (idx === -1) return false;
+      db.student_works[idx] = { ...db.student_works[idx], ...data };
+      saveDatabase();
+      return true;
+    },
+    delete: (id: number): boolean => {
+      const idx = db.student_works.findIndex(sw => sw.id === id);
+      if (idx === -1) return false;
+      db.student_works.splice(idx, 1);
+      saveDatabase();
+      return true;
+    },
+    count: (filter?: (sw: StudentWork) => boolean): number => {
+      if (filter) return db.student_works.filter(filter).length;
+      return db.student_works.length;
     },
   },
 };

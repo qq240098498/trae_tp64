@@ -11,6 +11,7 @@ import {
   InboxOutlined,
   ShopOutlined,
   FundProjectionScreenOutlined,
+  PictureOutlined,
 } from '@ant-design/icons';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import CoursesPage from './pages/CoursesPage';
@@ -22,6 +23,7 @@ import PaymentsPage from './pages/PaymentsPage';
 import DashboardPage from './pages/DashboardPage';
 import MaterialsPage from './pages/MaterialsPage';
 import MaterialCostsPage from './pages/MaterialCostsPage';
+import StudentWorksPage from './pages/StudentWorksPage';
 
 const { Header, Sider, Content } = Layout;
 
@@ -43,6 +45,7 @@ function App() {
     { key: '/payments', icon: <MoneyCollectOutlined />, label: '课酬核算' },
     { key: '/materials', icon: <InboxOutlined />, label: '材料库存' },
     { key: '/material-costs', icon: <FundProjectionScreenOutlined />, label: '耗材成本' },
+    { key: '/student-works', icon: <PictureOutlined />, label: '作品画廊' },
   ];
 
   return (
@@ -100,6 +103,7 @@ function App() {
               <Route path="/payments" element={<PaymentsPage />} />
               <Route path="/materials" element={<MaterialsPage />} />
               <Route path="/material-costs" element={<MaterialCostsPage />} />
+              <Route path="/student-works" element={<StudentWorksPage />} />
             </Routes>
           </div>
         </Content>
