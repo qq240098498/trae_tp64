@@ -9,7 +9,7 @@
       "semester_weeks": 0,
       "description": "单次体验课，零基础可学",
       "id": 1,
-      "created_at": "2026-06-21 10:51:23"
+      "created_at": "2026-06-21 14:00:30"
     },
     {
       "name": "水彩进阶班",
@@ -20,7 +20,7 @@
       "semester_weeks": 12,
       "description": "12周系统学习，每周2课时",
       "id": 2,
-      "created_at": "2026-06-21 10:51:23"
+      "created_at": "2026-06-21 14:00:30"
     },
     {
       "name": "油画基础",
@@ -31,7 +31,7 @@
       "semester_weeks": 0,
       "description": "单次油画体验",
       "id": 3,
-      "created_at": "2026-06-21 10:51:23"
+      "created_at": "2026-06-21 14:00:30"
     },
     {
       "name": "油画系统课",
@@ -42,7 +42,7 @@
       "semester_weeks": 16,
       "description": "16周系统课程",
       "id": 4,
-      "created_at": "2026-06-21 10:51:23"
+      "created_at": "2026-06-21 14:00:30"
     },
     {
       "name": "书法入门",
@@ -53,7 +53,7 @@
       "semester_weeks": 0,
       "description": "软笔书法单次体验",
       "id": 5,
-      "created_at": "2026-06-21 10:51:23"
+      "created_at": "2026-06-21 14:00:30"
     },
     {
       "name": "书法学期班",
@@ -64,7 +64,7 @@
       "semester_weeks": 12,
       "description": "12周书法系统学习",
       "id": 6,
-      "created_at": "2026-06-21 10:51:23"
+      "created_at": "2026-06-21 14:00:30"
     },
     {
       "name": "陶艺体验",
@@ -75,7 +75,7 @@
       "semester_weeks": 0,
       "description": "拉坯+上釉体验",
       "id": 7,
-      "created_at": "2026-06-21 10:51:23"
+      "created_at": "2026-06-21 14:00:30"
     },
     {
       "name": "陶艺系统课",
@@ -86,7 +86,7 @@
       "semester_weeks": 10,
       "description": "10周陶艺课程",
       "id": 8,
-      "created_at": "2026-06-21 10:51:23"
+      "created_at": "2026-06-21 14:00:30"
     },
     {
       "name": "皮具手作",
@@ -97,7 +97,7 @@
       "semester_weeks": 0,
       "description": "皮具制作单次体验",
       "id": 9,
-      "created_at": "2026-06-21 10:51:23"
+      "created_at": "2026-06-21 14:00:30"
     },
     {
       "name": "皮具进阶班",
@@ -108,7 +108,7 @@
       "semester_weeks": 8,
       "description": "8周皮具制作系统课",
       "id": 10,
-      "created_at": "2026-06-21 10:51:23"
+      "created_at": "2026-06-21 14:00:30"
     }
   ],
   "teachers": [
@@ -118,7 +118,7 @@
       "hourly_rate": 200,
       "specialty": "水彩画",
       "id": 1,
-      "created_at": "2026-06-21 10:51:23"
+      "created_at": "2026-06-21 14:00:30"
     },
     {
       "name": "王芳",
@@ -126,7 +126,7 @@
       "hourly_rate": 250,
       "specialty": "油画",
       "id": 2,
-      "created_at": "2026-06-21 10:51:23"
+      "created_at": "2026-06-21 14:00:30"
     },
     {
       "name": "张建国",
@@ -134,7 +134,7 @@
       "hourly_rate": 180,
       "specialty": "书法",
       "id": 3,
-      "created_at": "2026-06-21 10:51:23"
+      "created_at": "2026-06-21 14:00:30"
     },
     {
       "name": "陈思",
@@ -142,7 +142,7 @@
       "hourly_rate": 220,
       "specialty": "陶艺",
       "id": 4,
-      "created_at": "2026-06-21 10:51:23"
+      "created_at": "2026-06-21 14:00:30"
     },
     {
       "name": "刘洋",
@@ -150,7 +150,7 @@
       "hourly_rate": 280,
       "specialty": "皮具制作",
       "id": 5,
-      "created_at": "2026-06-21 10:51:23"
+      "created_at": "2026-06-21 14:00:30"
     }
   ],
   "classrooms": [
@@ -185,32 +185,7 @@
       "id": 5
     }
   ],
-  "schedules": [
-    {
-      "status": "scheduled",
-      "course_id": 8,
-      "teacher_id": 4,
-      "classroom_id": 4,
-      "date": "2026-06-09",
-      "start_time": "02:06",
-      "end_time": "12:19",
-      "max_students": 10,
-      "id": 1,
-      "created_at": "2026-06-21 12:20:01"
-    },
-    {
-      "status": "scheduled",
-      "course_id": 1,
-      "teacher_id": 1,
-      "classroom_id": 4,
-      "date": "2026-06-25",
-      "start_time": "09:00",
-      "end_time": "11:00",
-      "max_students": 8,
-      "id": 2,
-      "created_at": "2026-06-21 12:36:56"
-    }
-  ],
+  "schedules": [],
   "students": [
     {
       "name": "赵小红",
@@ -218,7 +193,7 @@
       "gender": "女",
       "note": "零基础，对水彩感兴趣",
       "id": 1,
-      "created_at": "2026-06-21 10:51:23"
+      "created_at": "2026-06-21 14:00:30"
     },
     {
       "name": "钱伟",
@@ -226,7 +201,7 @@
       "gender": "男",
       "note": "有一定油画基础",
       "id": 2,
-      "created_at": "2026-06-21 10:51:23"
+      "created_at": "2026-06-21 14:00:30"
     },
     {
       "name": "孙丽",
@@ -234,7 +209,7 @@
       "gender": "女",
       "note": "想学书法修身养性",
       "id": 3,
-      "created_at": "2026-06-21 10:51:23"
+      "created_at": "2026-06-21 14:00:30"
     },
     {
       "name": "周强",
@@ -242,7 +217,7 @@
       "gender": "男",
       "note": "陶艺爱好者",
       "id": 4,
-      "created_at": "2026-06-21 10:51:23"
+      "created_at": "2026-06-21 14:00:30"
     },
     {
       "name": "吴敏",
@@ -250,20 +225,185 @@
       "gender": "女",
       "note": "喜欢手工皮具",
       "id": 5,
-      "created_at": "2026-06-21 10:51:23"
+      "created_at": "2026-06-21 14:00:30"
     }
   ],
   "enrollments": [],
   "attendances": [],
   "teacher_payments": [],
+  "materials": [
+    {
+      "name": "水彩画纸8K",
+      "category": "画纸",
+      "unit": "张",
+      "unit_price": 2.5,
+      "stock": 500,
+      "description": "专业水彩画纸，8开",
+      "id": 1,
+      "created_at": "2026-06-21 14:00:30"
+    },
+    {
+      "name": "素描纸4K",
+      "category": "画纸",
+      "unit": "张",
+      "unit_price": 1.8,
+      "stock": 800,
+      "description": "铅画纸，4开",
+      "id": 2,
+      "created_at": "2026-06-21 14:00:30"
+    },
+    {
+      "name": "油画布50×70",
+      "category": "画布",
+      "unit": "块",
+      "unit_price": 35,
+      "stock": 100,
+      "description": "亚麻油画布",
+      "id": 3,
+      "created_at": "2026-06-21 14:00:30"
+    },
+    {
+      "name": "水彩颜料套装",
+      "category": "颜料",
+      "unit": "套",
+      "unit_price": 68,
+      "stock": 50,
+      "description": "24色水彩颜料",
+      "id": 4,
+      "created_at": "2026-06-21 14:00:30"
+    },
+    {
+      "name": "油画颜料钛白",
+      "category": "颜料",
+      "unit": "支",
+      "unit_price": 22,
+      "stock": 80,
+      "description": "大支装钛白油画颜料",
+      "id": 5,
+      "created_at": "2026-06-21 14:00:30"
+    },
+    {
+      "name": "丙烯颜料12色",
+      "category": "颜料",
+      "unit": "套",
+      "unit_price": 45,
+      "stock": 60,
+      "description": "12色丙烯颜料套装",
+      "id": 6,
+      "created_at": "2026-06-21 14:00:30"
+    },
+    {
+      "name": "书法墨汁500ml",
+      "category": "书法",
+      "unit": "瓶",
+      "unit_price": 18,
+      "stock": 100,
+      "description": "一得阁墨汁",
+      "id": 7,
+      "created_at": "2026-06-21 14:00:30"
+    },
+    {
+      "name": "毛边纸",
+      "category": "书法",
+      "unit": "刀",
+      "unit_price": 28,
+      "stock": 120,
+      "description": "半生熟毛边纸100张",
+      "id": 8,
+      "created_at": "2026-06-21 14:00:30"
+    },
+    {
+      "name": "陶泥5kg",
+      "category": "陶艺",
+      "unit": "袋",
+      "unit_price": 38,
+      "stock": 150,
+      "description": "中温陶土泥",
+      "id": 9,
+      "created_at": "2026-06-21 14:00:30"
+    },
+    {
+      "name": "釉料套装",
+      "category": "陶艺",
+      "unit": "套",
+      "unit_price": 120,
+      "stock": 30,
+      "description": "6色基础釉料",
+      "id": 10,
+      "created_at": "2026-06-21 14:00:30"
+    },
+    {
+      "name": "植鞣革皮料1.5mm",
+      "category": "皮料",
+      "unit": "平方英尺",
+      "unit_price": 28,
+      "stock": 200,
+      "description": "意大利进口植鞣革",
+      "id": 11,
+      "created_at": "2026-06-21 14:00:30"
+    },
+    {
+      "name": "疯马皮2.0mm",
+      "category": "皮料",
+      "unit": "平方英尺",
+      "unit_price": 35,
+      "stock": 150,
+      "description": "复古疯马皮",
+      "id": 12,
+      "created_at": "2026-06-21 14:00:30"
+    },
+    {
+      "name": "蜡线25色",
+      "category": "皮具",
+      "unit": "卷",
+      "unit_price": 8,
+      "stock": 200,
+      "description": "涤纶蜡线",
+      "id": 13,
+      "created_at": "2026-06-21 14:00:30"
+    },
+    {
+      "name": "黄铜四合扣",
+      "category": "皮具",
+      "unit": "套",
+      "unit_price": 1.5,
+      "stock": 500,
+      "description": "纯铜四合扣",
+      "id": 14,
+      "created_at": "2026-06-21 14:00:30"
+    },
+    {
+      "name": "画笔套装",
+      "category": "工具",
+      "unit": "套",
+      "unit_price": 48,
+      "stock": 80,
+      "description": "10支装水彩画笔",
+      "id": 15,
+      "created_at": "2026-06-21 14:00:30"
+    },
+    {
+      "name": "调色盘",
+      "category": "工具",
+      "unit": "个",
+      "unit_price": 12,
+      "stock": 150,
+      "description": "陶瓷调色盘",
+      "id": 16,
+      "created_at": "2026-06-21 14:00:30"
+    }
+  ],
+  "material_usages": [],
   "nextId": {
     "courses": 11,
     "teachers": 6,
     "classrooms": 6,
-    "schedules": 3,
+    "schedules": 1,
     "students": 6,
     "enrollments": 1,
     "attendances": 1,
-    "teacher_payments": 1
+    "teacher_payments": 1,
+    "materials": 17,
+    "material_usages": 1
   }
 }

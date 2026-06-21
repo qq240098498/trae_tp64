@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Table, Button, Modal, Form, Select, InputNumber, DatePicker, TimePicker, Tag, Space, Popconfirm, message, Divider, Tooltip } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, CheckCircleOutlined, TeamOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { Table, Button, Modal, Form, Select, InputNumber, DatePicker, TimePicker, Tag, Space, Popconfirm, message, Divider, Tooltip, Card, Input, Alert } from 'antd';
+import { PlusOutlined, EditOutlined, DeleteOutlined, CheckCircleOutlined, TeamOutlined, InfoCircleOutlined, ShoppingCartOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import api from '../api';
 
@@ -16,19 +16,30 @@ export default function SchedulesPage() {
   const [attendanceList, setAttendanceList] = useState<any[]>([]);
   const [enrollments, setEnrollments] = useState<any[]>([]);
   const [attendanceForm] = Form.useForm();
+  const [usageForm] = Form.useForm();
   const [form] = Form.useForm();
+  const [materials, setMaterials] = useState<any[]>([]);
+  const [materialCategories, setMaterialCategories] = useState<string[]>([]);
+  const [usageModalOpen, setUsageModalOpen] = useState(false);
+  const [currentUsages, setCurrentUsages] = useState<any[]>([]);
+  const [filterCategory, setFilterCategory] = useState<string | undefined>();
+  const [selectedMaterial, setSelectedMaterial] = useState<any>(null);
 
   const loadData = async () => {
-    const [s, c, t, rm] = await Promise.all([
+    const [s, c, t, rm, m, mc] = await Promise.all([
       api.get('/schedules'),
       api.get('/courses'),
       api.get('/teachers'),
       api.get('/classrooms'),
+      api.get('/materials'),
+      api.get('/materials/categories'),
     ]);
     setList(s.data || []);
     setCourses(c.data || []);
     setTeachers(t.data || []);
     setClassrooms(rm.data || []);
+    setMaterials(m.data || []);
+    setMaterialCategories(mc.data || []);
   };
 
   useEffect(() => { loadData(); }, []);
@@ -132,6 +143,54 @@ export default function SchedulesPage() {
     }
   };
 
+  const openUsage = async (record: any) => {
+    setCurrentSchedule(record);
+    setFilterCategory(undefined);
+    setSelectedMaterial(null);
+    usageForm.resetFields();
+    const res = await api.get('/material-usages', { params: { schedule_id: record.id } });
+    setCurrentUsages(res.data || []);
+    setUsageModalOpen(true);
+  };
+
+  const handleAddUsage = async (values: any) => {
+    try {
+      const res = await api.post('/material-usages', {
+        schedule_id: currentSchedule.id,
+        material_id: values.material_id,
+        quantity: values.quantity,
+        note: values.note,
+      });
+      if (res.code === 0) {
+        const info = res.data || {};
+        message.success(`登记成功！总成本 ¥${info.total_cost?.toFixed(2)}，人均 ¥${info.per_student_cost?.toFixed(2)}（${info.student_count}人）`);
+        usageForm.resetFields();
+        setSelectedMaterial(null);
+        loadData();
+        openUsage(currentSchedule);
+      } else {
+        message.error(res.message);
+      }
+    } catch (e: any) {
+      message.error(e.response?.data?.message || '登记失败');
+    }
+  };
+
+  const handleDeleteUsage = async (id: number) => {
+    try {
+      const res = await api.delete(`/material-usages/${id}`);
+      if (res.code === 0) {
+        message.success(res.message);
+        loadData();
+        openUsage(currentSchedule);
+      } else {
+        message.error(res.message);
+      }
+    } catch (e: any) {
+      message.error(e.response?.data?.message || '删除失败');
+    }
+  };
+
   const columns = [
     { title: 'ID', dataIndex: 'id', width: 60 },
     { title: '课程', dataIndex: 'course_name', render: (v: string, r: any) => `${v}(${r.course_category})` },
@@ -144,9 +203,10 @@ export default function SchedulesPage() {
       const map: any = { scheduled: <Tag color="blue">已排课</Tag>, completed: <Tag color="green">已完成</Tag>, cancelled: <Tag color="red">已取消</Tag> };
       return map[s];
     } },
-    { title: '操作', key: 'action', width: 280, render: (_: any, r: any) => (
+    { title: '操作', key: 'action', width: 360, render: (_: any, r: any) => (
       <Space size="small">
         <Button size="small" icon={<TeamOutlined />} onClick={() => openAttendance(r)}>签到</Button>
+        <Button size="small" icon={<ShoppingCartOutlined />} type={r.status === 'completed' ? 'primary' : 'default'} onClick={() => openUsage(r)}>耗材登记</Button>
         {r.status === 'scheduled' && (
           <>
             <Button size="small" type="primary" icon={<CheckCircleOutlined />} onClick={() => handleComplete(r)}>完成</Button>
@@ -286,6 +346,142 @@ export default function SchedulesPage() {
                 </Form>
               </>
             )}
+          </div>
+        )}
+      </Modal>
+
+      <Modal
+        title={currentSchedule ? `耗材登记 - ${currentSchedule.course_name}` : '耗材登记'}
+        open={usageModalOpen}
+        onCancel={() => { setUsageModalOpen(false); setFilterCategory(undefined); setSelectedMaterial(null); }}
+        footer={null}
+        width={760}
+      >
+        {currentSchedule && (
+          <div>
+            <Card size="small" style={{ marginBottom: 16 }}>
+              <p style={{ margin: 0 }}>
+                <strong>课程：</strong>{currentSchedule.course_name}（{currentSchedule.course_category}）
+                | <strong>老师：</strong>{currentSchedule.teacher_name}
+                | <strong>时间：</strong>{currentSchedule.date} {currentSchedule.start_time}-{currentSchedule.end_time}
+                | <strong>教室：</strong>{currentSchedule.classroom_name}
+              </p>
+            </Card>
+
+            <h4 style={{ marginBottom: 8 }}>本次课已登记耗材</h4>
+            {currentUsages.length > 0 ? (
+              <>
+                <Table
+                  size="small"
+                  rowKey="id"
+                  dataSource={currentUsages}
+                  pagination={false}
+                  columns={[
+                    { title: '材料', dataIndex: 'material_name' },
+                    { title: '分类', dataIndex: 'material_category', render: (v: string) => <Tag>{v}</Tag> },
+                    { title: '用量', render: (_: any, r: any) => `${r.quantity} ${r.material_unit}` },
+                    { title: '单价', render: (_: any, r: any) => `¥${r.unit_price?.toFixed(2)}` },
+                    { title: '总成本', render: (_: any, r: any) => <span style={{ color: '#1677ff', fontWeight: 500 }}>¥{r.total_cost?.toFixed(2)}</span> },
+                    { title: '均摊人数', dataIndex: 'student_count', render: (v: number) => `${v}人` },
+                    { title: '人均成本', render: (_: any, r: any) => <span style={{ color: '#fa8c16' }}>¥{r.per_student_cost?.toFixed(2)}</span> },
+                    { title: '操作', width: 80, render: (_: any, r: any) => (
+                      <Popconfirm title="确定删除？删除后库存将恢复" onConfirm={() => handleDeleteUsage(r.id)}>
+                        <Button size="small" danger type="link">删除</Button>
+                      </Popconfirm>
+                    ) },
+                  ]}
+                />
+                <div style={{ marginTop: 8, padding: 8, background: '#f5f5f5', borderRadius: 4 }}>
+                  <strong>总成本合计：</strong>
+                  <span style={{ color: '#cf1322', fontSize: 16, fontWeight: 600 }}>
+                    ¥{currentUsages.reduce((s, r) => s + r.total_cost, 0).toFixed(2)}
+                  </span>
+                </div>
+              </>
+            ) : (
+              <div style={{ padding: 16, textAlign: 'center', color: '#999', border: '1px dashed #d9d9d9', borderRadius: 4, marginBottom: 16 }}>
+                暂未登记耗材
+              </div>
+            )}
+
+            <Divider style={{ margin: '12px 0' }} />
+            <h4 style={{ marginBottom: 8 }}>添加耗材使用</h4>
+            <Form form={usageForm} layout="vertical" onFinish={handleAddUsage}>
+              <Space style={{ marginBottom: 8 }}>
+                <Select
+                  placeholder="按分类筛选材料"
+                  allowClear
+                  style={{ width: 150 }}
+                  value={filterCategory}
+                  onChange={setFilterCategory}
+                >
+                  {materialCategories.map(c => (
+                    <Select.Option key={c} value={c}>{c}</Select.Option>
+                  ))}
+                </Select>
+                <Select
+                  placeholder="搜索选择材料..."
+                  showSearch
+                  style={{ width: 350 }}
+                  value={selectedMaterial?.id || undefined}
+                  filterOption={(input, option: any) =>
+                    (option?.children || '').toString().toLowerCase().includes(input.toLowerCase())
+                  }
+                  onChange={(id) => {
+                    usageForm.setFieldsValue({ material_id: id });
+                    setSelectedMaterial(materials.find(m => m.id === id));
+                  }}
+                  optionFilterProp="children"
+                >
+                  {materials
+                    .filter(m => !filterCategory || m.category === filterCategory)
+                    .map(m => (
+                      <Select.Option key={m.id} value={m.id}>
+                        {m.name} [{m.category}] - 库存:{m.stock}{m.unit} - ¥{m.unit_price.toFixed(2)}/{m.unit}
+                      </Select.Option>
+                    ))}
+                </Select>
+              </Space>
+              <Form.Item name="material_id" hidden rules={[{ required: true, message: '请选择材料' }]}>
+                <Input />
+              </Form.Item>
+              {selectedMaterial && (
+                <Alert
+                  type="info"
+                  showIcon
+                  message={`${selectedMaterial.name} | 当前库存：${selectedMaterial.stock}${selectedMaterial.unit} | 单价：¥${selectedMaterial.unit_price.toFixed(2)}/${selectedMaterial.unit}`}
+                  style={{ marginBottom: 16 }}
+                />
+              )}
+              <Space style={{ width: '100%' }} align="start">
+                <Form.Item name="quantity" label="使用数量" rules={[{ required: true, message: '请输入数量' }]} style={{ marginBottom: 0, width: 200 }}>
+                  <InputNumber
+                    min={0.01}
+                    step={1}
+                    precision={2}
+                    style={{ width: '100%' }}
+                    placeholder="请输入数量"
+                    max={selectedMaterial?.stock}
+                  />
+                </Form.Item>
+                {selectedMaterial && usageForm.getFieldValue('quantity') ? (
+                  <div style={{ paddingTop: 30 }}>
+                    <Tag color="blue">预计成本：¥{(selectedMaterial.unit_price * Number(usageForm.getFieldValue('quantity') || 0)).toFixed(2)}</Tag>
+                  </div>
+                ) : null}
+              </Space>
+              <Form.Item name="note" label="备注" style={{ marginTop: 16, marginBottom: 8 }}>
+                <Input.TextArea rows={2} placeholder="选填" />
+              </Form.Item>
+              <Form.Item style={{ marginTop: 8 }}>
+                <Space>
+                  <Button type="primary" htmlType="submit" icon={<PlusOutlined />}>
+                    登记入账
+                  </Button>
+                  <Button onClick={() => { usageForm.resetFields(); setSelectedMaterial(null); }}>重置</Button>
+                </Space>
+              </Form.Item>
+            </Form>
           </div>
         )}
       </Modal>

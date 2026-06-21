@@ -88,6 +88,29 @@ export interface TeacherPayment {
   created_at: string;
 }
 
+export interface Material {
+  id: number;
+  name: string;
+  category: string;
+  unit: string;
+  unit_price: number;
+  stock: number;
+  description?: string;
+  created_at: string;
+}
+
+export interface MaterialUsage {
+  id: number;
+  schedule_id: number;
+  material_id: number;
+  quantity: number;
+  total_cost: number;
+  per_student_cost: number;
+  student_count: number;
+  note?: string;
+  created_at: string;
+}
+
 interface Database {
   courses: Course[];
   teachers: Teacher[];
@@ -97,6 +120,8 @@ interface Database {
   enrollments: Enrollment[];
   attendances: Attendance[];
   teacher_payments: TeacherPayment[];
+  materials: Material[];
+  material_usages: MaterialUsage[];
   nextId: { [key: string]: number };
 }
 
@@ -126,6 +151,8 @@ function createEmptyDatabase(): Database {
     enrollments: [],
     attendances: [],
     teacher_payments: [],
+    materials: [],
+    material_usages: [],
     nextId: {
       courses: 1,
       teachers: 1,
@@ -135,6 +162,8 @@ function createEmptyDatabase(): Database {
       enrollments: 1,
       attendances: 1,
       teacher_payments: 1,
+      materials: 1,
+      material_usages: 1,
     },
   };
 }
@@ -208,6 +237,29 @@ function seedInitialData() {
   studentsData.forEach(s => {
     const id = db.nextId.students++;
     db.students.push({ ...s, id, created_at: now() });
+  });
+
+  const materialsData: Omit<Material, 'id' | 'created_at'>[] = [
+    { name: '水彩画纸8K', category: '画纸', unit: '张', unit_price: 2.5, stock: 500, description: '专业水彩画纸，8开' },
+    { name: '素描纸4K', category: '画纸', unit: '张', unit_price: 1.8, stock: 800, description: '铅画纸，4开' },
+    { name: '油画布50×70', category: '画布', unit: '块', unit_price: 35, stock: 100, description: '亚麻油画布' },
+    { name: '水彩颜料套装', category: '颜料', unit: '套', unit_price: 68, stock: 50, description: '24色水彩颜料' },
+    { name: '油画颜料钛白', category: '颜料', unit: '支', unit_price: 22, stock: 80, description: '大支装钛白油画颜料' },
+    { name: '丙烯颜料12色', category: '颜料', unit: '套', unit_price: 45, stock: 60, description: '12色丙烯颜料套装' },
+    { name: '书法墨汁500ml', category: '书法', unit: '瓶', unit_price: 18, stock: 100, description: '一得阁墨汁' },
+    { name: '毛边纸', category: '书法', unit: '刀', unit_price: 28, stock: 120, description: '半生熟毛边纸100张' },
+    { name: '陶泥5kg', category: '陶艺', unit: '袋', unit_price: 38, stock: 150, description: '中温陶土泥' },
+    { name: '釉料套装', category: '陶艺', unit: '套', unit_price: 120, stock: 30, description: '6色基础釉料' },
+    { name: '植鞣革皮料1.5mm', category: '皮料', unit: '平方英尺', unit_price: 28, stock: 200, description: '意大利进口植鞣革' },
+    { name: '疯马皮2.0mm', category: '皮料', unit: '平方英尺', unit_price: 35, stock: 150, description: '复古疯马皮' },
+    { name: '蜡线25色', category: '皮具', unit: '卷', unit_price: 8, stock: 200, description: '涤纶蜡线' },
+    { name: '黄铜四合扣', category: '皮具', unit: '套', unit_price: 1.5, stock: 500, description: '纯铜四合扣' },
+    { name: '画笔套装', category: '工具', unit: '套', unit_price: 48, stock: 80, description: '10支装水彩画笔' },
+    { name: '调色盘', category: '工具', unit: '个', unit_price: 12, stock: 150, description: '陶瓷调色盘' },
+  ];
+  materialsData.forEach(m => {
+    const id = db.nextId.materials++;
+    db.materials.push({ ...m, id, created_at: now() });
   });
 
   saveDatabase();
@@ -439,6 +491,73 @@ export const tables = {
       const idx = db.teacher_payments.findIndex(p => p.id === id);
       if (idx === -1) return false;
       db.teacher_payments[idx] = { ...db.teacher_payments[idx], ...data };
+      saveDatabase();
+      return true;
+    },
+  },
+  materials: {
+    all: (filter?: (m: Material) => boolean): Material[] => {
+      let result = [...db.materials];
+      if (filter) result = result.filter(filter);
+      return result.sort((a, b) => b.id - a.id);
+    },
+    get: (id: number): Material | undefined => db.materials.find(m => m.id === id),
+    insert: (data: Omit<Material, 'id' | 'created_at'>): Material => {
+      const material: Material = { ...data, id: nextId('materials'), created_at: now() };
+      db.materials.push(material);
+      saveDatabase();
+      return material;
+    },
+    update: (id: number, data: Partial<Material>): boolean => {
+      const idx = db.materials.findIndex(m => m.id === id);
+      if (idx === -1) return false;
+      db.materials[idx] = { ...db.materials[idx], ...data };
+      saveDatabase();
+      return true;
+    },
+    delete: (id: number): boolean => {
+      const idx = db.materials.findIndex(m => m.id === id);
+      if (idx === -1) return false;
+      db.materials.splice(idx, 1);
+      saveDatabase();
+      return true;
+    },
+    updateStock: (id: number, delta: number): boolean => {
+      const idx = db.materials.findIndex(m => m.id === id);
+      if (idx === -1) return false;
+      const newStock = db.materials[idx].stock + delta;
+      if (newStock < 0) return false;
+      db.materials[idx] = { ...db.materials[idx], stock: newStock };
+      saveDatabase();
+      return true;
+    },
+  },
+  material_usages: {
+    all: (filter?: (mu: MaterialUsage) => boolean): MaterialUsage[] => {
+      let result = [...db.material_usages];
+      if (filter) result = result.filter(filter);
+      return result.sort((a, b) => b.id - a.id);
+    },
+    get: (id: number): MaterialUsage | undefined => db.material_usages.find(mu => mu.id === id),
+    findBySchedule: (scheduleId: number): MaterialUsage[] =>
+      db.material_usages.filter(mu => mu.schedule_id === scheduleId),
+    insert: (data: Omit<MaterialUsage, 'id' | 'created_at'>): MaterialUsage => {
+      const usage: MaterialUsage = { ...data, id: nextId('material_usages'), created_at: now() };
+      db.material_usages.push(usage);
+      saveDatabase();
+      return usage;
+    },
+    update: (id: number, data: Partial<MaterialUsage>): boolean => {
+      const idx = db.material_usages.findIndex(mu => mu.id === id);
+      if (idx === -1) return false;
+      db.material_usages[idx] = { ...db.material_usages[idx], ...data };
+      saveDatabase();
+      return true;
+    },
+    delete: (id: number): boolean => {
+      const idx = db.material_usages.findIndex(mu => mu.id === id);
+      if (idx === -1) return false;
+      db.material_usages.splice(idx, 1);
       saveDatabase();
       return true;
     },

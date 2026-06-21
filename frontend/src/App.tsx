@@ -8,6 +8,9 @@ import {
   CheckCircleOutlined,
   MoneyCollectOutlined,
   AppstoreOutlined,
+  InboxOutlined,
+  ShopOutlined,
+  FundProjectionScreenOutlined,
 } from '@ant-design/icons';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import CoursesPage from './pages/CoursesPage';
@@ -17,6 +20,8 @@ import EnrollmentsPage from './pages/EnrollmentsPage';
 import AttendancesPage from './pages/AttendancesPage';
 import PaymentsPage from './pages/PaymentsPage';
 import DashboardPage from './pages/DashboardPage';
+import MaterialsPage from './pages/MaterialsPage';
+import MaterialCostsPage from './pages/MaterialCostsPage';
 
 const { Header, Sider, Content } = Layout;
 
@@ -36,6 +41,8 @@ function App() {
     { key: '/enrollments', icon: <UserAddOutlined />, label: '学员报名' },
     { key: '/attendances', icon: <CheckCircleOutlined />, label: '签到消次' },
     { key: '/payments', icon: <MoneyCollectOutlined />, label: '课酬核算' },
+    { key: '/materials', icon: <InboxOutlined />, label: '材料库存' },
+    { key: '/material-costs', icon: <FundProjectionScreenOutlined />, label: '耗材成本' },
   ];
 
   return (
@@ -91,6 +98,8 @@ function App() {
               <Route path="/enrollments" element={<EnrollmentsPage />} />
               <Route path="/attendances" element={<AttendancesPage />} />
               <Route path="/payments" element={<PaymentsPage />} />
+              <Route path="/materials" element={<MaterialsPage />} />
+              <Route path="/material-costs" element={<MaterialCostsPage />} />
             </Routes>
           </div>
         </Content>

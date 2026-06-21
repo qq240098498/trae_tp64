@@ -11,6 +11,8 @@ import studentsRouter from './routes/students';
 import enrollmentsRouter from './routes/enrollments';
 import attendancesRouter from './routes/attendances';
 import paymentsRouter from './routes/payments';
+import materialsRouter from './routes/materials';
+import materialUsagesRouter from './routes/material_usages';
 
 const app = express();
 const PORT = 3002;
@@ -36,6 +38,8 @@ app.use('/api/students', studentsRouter);
 app.use('/api/enrollments', enrollmentsRouter);
 app.use('/api/attendances', attendancesRouter);
 app.use('/api/payments', paymentsRouter);
+app.use('/api/materials', materialsRouter);
+app.use('/api/material-usages', materialUsagesRouter);
 
 app.get('/api/health', (req, res) => {
   res.json({ code: 0, message: '服务器运行正常' });
