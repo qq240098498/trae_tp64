@@ -83,7 +83,7 @@ router.post('/', (req: Request, res: Response) => {
     return res.json({ code: 400, message: '该课次人数已满' });
   }
 
-  tables.attendances.insert({
+  const attendance = tables.attendances.insert({
     enrollment_id: eid,
     schedule_id: sid,
     status,
@@ -101,15 +101,71 @@ router.post('/', (req: Request, res: Response) => {
     }
   }
 
+  if (status === 'leave' && enrollment.enroll_mode === 'semester') {
+    const attendancesForEnrollment = tables.attendances.all(
+      (a) => a.enrollment_id === eid
+    );
+    const missedLessonNumber = enrollment.total_sessions - enrollment.remaining_sessions + 1;
+
+    const existingMakeup = tables.makeup_pool.findPendingByStudentAndCourse(
+      enrollment.student_id,
+      enrollment.course_id
+    );
+
+    if (existingMakeup.length === 0 || !existingMakeup.find(m => m.original_schedule_id === sid)) {
+      tables.makeup_pool.insert({
+        enrollment_id: eid,
+        student_id: enrollment.student_id,
+        course_id: enrollment.course_id,
+        original_schedule_id: sid,
+        missed_lesson_number: missedLessonNumber,
+        note: note || '学员请假，自动进入补课池',
+      });
+    }
+  }
+
   res.json({ code: 0, message: '签到成功' });
 });
 
 router.put('/:id', (req: Request, res: Response) => {
   const { status, note } = req.body;
+  const id = Number(req.params.id);
+  const attendance = tables.attendances.get(id);
+  if (!attendance) {
+    return res.json({ code: 404, message: '签到记录不存在' });
+  }
+
   const data: any = {};
   if (status !== undefined) data.status = status;
   if (note !== undefined) data.note = note;
-  tables.attendances.update(Number(req.params.id), data);
+  tables.attendances.update(id, data);
+
+  if (status === 'leave') {
+    const enrollment = tables.enrollments.get(attendance.enrollment_id);
+    if (enrollment && enrollment.enroll_mode === 'semester') {
+      const existingMakeup = tables.makeup_pool.findPendingByStudentAndCourse(
+        enrollment.student_id,
+        enrollment.course_id
+      );
+      if (!existingMakeup.find(m => m.original_schedule_id === attendance.schedule_id)) {
+        const missedLessonNumber = enrollment.total_sessions - enrollment.remaining_sessions + 1;
+        tables.makeup_pool.insert({
+          enrollment_id: enrollment.id,
+          student_id: enrollment.student_id,
+          course_id: enrollment.course_id,
+          original_schedule_id: attendance.schedule_id,
+          missed_lesson_number: missedLessonNumber,
+          note: note || '学员请假，自动进入补课池',
+        });
+      }
+    }
+  } else if (attendance.status === 'leave' && status !== 'leave') {
+    const makeupRecords = tables.makeup_pool.all(
+      m => m.original_schedule_id === attendance.schedule_id && m.enrollment_id === attendance.enrollment_id && m.status === 'pending'
+    );
+    makeupRecords.forEach(m => tables.makeup_pool.delete(m.id));
+  }
+
   res.json({ code: 0, message: '更新成功' });
 });
 
@@ -127,6 +183,13 @@ router.delete('/:id', (req: Request, res: Response) => {
       const newStatus: any = enrollment.status === 'completed' ? 'active' : enrollment.status;
       tables.enrollments.update(attendance.enrollment_id, { remaining_sessions: newRemaining, status: newStatus });
     }
+  }
+
+  if (attendance.status === 'leave') {
+    const makeupRecords = tables.makeup_pool.all(
+      m => m.original_schedule_id === attendance.schedule_id && m.enrollment_id === attendance.enrollment_id
+    );
+    makeupRecords.forEach(m => tables.makeup_pool.delete(m.id));
   }
 
   tables.attendances.delete(id);

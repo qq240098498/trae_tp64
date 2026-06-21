@@ -12,6 +12,7 @@ import {
   ShopOutlined,
   FundProjectionScreenOutlined,
   PictureOutlined,
+  RedoOutlined,
 } from '@ant-design/icons';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import CoursesPage from './pages/CoursesPage';
@@ -24,6 +25,7 @@ import DashboardPage from './pages/DashboardPage';
 import MaterialsPage from './pages/MaterialsPage';
 import MaterialCostsPage from './pages/MaterialCostsPage';
 import StudentWorksPage from './pages/StudentWorksPage';
+import MakeupSchedulesPage from './pages/MakeupSchedulesPage';
 
 const { Header, Sider, Content } = Layout;
 
@@ -42,6 +44,7 @@ function App() {
     { key: '/students', icon: <TeamOutlined />, label: '学员管理' },
     { key: '/enrollments', icon: <UserAddOutlined />, label: '学员报名' },
     { key: '/attendances', icon: <CheckCircleOutlined />, label: '签到消次' },
+    { key: '/makeup-schedules', icon: <RedoOutlined />, label: '补课调度' },
     { key: '/payments', icon: <MoneyCollectOutlined />, label: '课酬核算' },
     { key: '/materials', icon: <InboxOutlined />, label: '材料库存' },
     { key: '/material-costs', icon: <FundProjectionScreenOutlined />, label: '耗材成本' },
@@ -100,6 +103,7 @@ function App() {
               <Route path="/students" element={<StudentsPage />} />
               <Route path="/enrollments" element={<EnrollmentsPage />} />
               <Route path="/attendances" element={<AttendancesPage />} />
+              <Route path="/makeup-schedules" element={<MakeupSchedulesPage />} />
               <Route path="/payments" element={<PaymentsPage />} />
               <Route path="/materials" element={<MaterialsPage />} />
               <Route path="/material-costs" element={<MaterialCostsPage />} />

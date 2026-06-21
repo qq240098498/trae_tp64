@@ -124,6 +124,33 @@ export interface StudentWork {
   created_at: string;
 }
 
+export interface MakeupPool {
+  id: number;
+  enrollment_id: number;
+  student_id: number;
+  course_id: number;
+  original_schedule_id: number;
+  missed_lesson_number: number;
+  status: 'pending' | 'matched' | 'completed' | 'expired';
+  note?: string;
+  created_at: string;
+  matched_at?: string;
+  completed_at?: string;
+}
+
+export interface MakeupMatch {
+  id: number;
+  makeup_pool_id: number;
+  target_schedule_id: number;
+  match_score: number;
+  status: 'recommended' | 'accepted' | 'rejected' | 'completed';
+  recommended_at: string;
+  accepted_at?: string;
+  rejected_at?: string;
+  completed_at?: string;
+  note?: string;
+}
+
 interface Database {
   courses: Course[];
   teachers: Teacher[];
@@ -136,6 +163,8 @@ interface Database {
   materials: Material[];
   material_usages: MaterialUsage[];
   student_works: StudentWork[];
+  makeup_pool: MakeupPool[];
+  makeup_matches: MakeupMatch[];
   nextId: { [key: string]: number };
 }
 
@@ -153,6 +182,8 @@ function loadDatabase(): Database {
         ...emptyDb,
         ...parsed,
         student_works: parsed.student_works || [],
+        makeup_pool: parsed.makeup_pool || [],
+        makeup_matches: parsed.makeup_matches || [],
         nextId: {
           ...emptyDb.nextId,
           ...parsed.nextId,
@@ -178,6 +209,8 @@ function createEmptyDatabase(): Database {
     materials: [],
     material_usages: [],
     student_works: [],
+    makeup_pool: [],
+    makeup_matches: [],
     nextId: {
       courses: 1,
       teachers: 1,
@@ -190,6 +223,8 @@ function createEmptyDatabase(): Database {
       materials: 1,
       material_usages: 1,
       student_works: 1,
+      makeup_pool: 1,
+      makeup_matches: 1,
     },
   };
 }
@@ -624,6 +659,80 @@ export const tables = {
     count: (filter?: (sw: StudentWork) => boolean): number => {
       if (filter) return db.student_works.filter(filter).length;
       return db.student_works.length;
+    },
+  },
+  makeup_pool: {
+    all: (filter?: (mp: MakeupPool) => boolean): MakeupPool[] => {
+      let result = [...db.makeup_pool];
+      if (filter) result = result.filter(filter);
+      return result.sort((a, b) => b.id - a.id);
+    },
+    get: (id: number): MakeupPool | undefined => db.makeup_pool.find(mp => mp.id === id),
+    findByStudent: (studentId: number): MakeupPool[] =>
+      db.makeup_pool.filter(mp => mp.student_id === studentId).sort((a, b) => b.id - a.id),
+    findByEnrollment: (enrollmentId: number): MakeupPool[] =>
+      db.makeup_pool.filter(mp => mp.enrollment_id === enrollmentId).sort((a, b) => b.id - a.id),
+    findPendingByStudentAndCourse: (studentId: number, courseId: number): MakeupPool[] =>
+      db.makeup_pool.filter(mp => mp.student_id === studentId && mp.course_id === courseId && mp.status === 'pending'),
+    insert: (data: Omit<MakeupPool, 'id' | 'created_at' | 'status'> & { status?: MakeupPool['status'] }): MakeupPool => {
+      const pool: MakeupPool = { status: 'pending', ...data, id: nextId('makeup_pool'), created_at: now() };
+      db.makeup_pool.push(pool);
+      saveDatabase();
+      return pool;
+    },
+    update: (id: number, data: Partial<MakeupPool>): boolean => {
+      const idx = db.makeup_pool.findIndex(mp => mp.id === id);
+      if (idx === -1) return false;
+      db.makeup_pool[idx] = { ...db.makeup_pool[idx], ...data };
+      saveDatabase();
+      return true;
+    },
+    delete: (id: number): boolean => {
+      const idx = db.makeup_pool.findIndex(mp => mp.id === id);
+      if (idx === -1) return false;
+      db.makeup_pool.splice(idx, 1);
+      saveDatabase();
+      return true;
+    },
+    count: (filter?: (mp: MakeupPool) => boolean): number => {
+      if (filter) return db.makeup_pool.filter(filter).length;
+      return db.makeup_pool.length;
+    },
+  },
+  makeup_matches: {
+    all: (filter?: (mm: MakeupMatch) => boolean): MakeupMatch[] => {
+      let result = [...db.makeup_matches];
+      if (filter) result = result.filter(filter);
+      return result.sort((a, b) => b.match_score - a.match_score || b.id - a.id);
+    },
+    get: (id: number): MakeupMatch | undefined => db.makeup_matches.find(mm => mm.id === id),
+    findByMakeupPool: (makeupPoolId: number): MakeupMatch[] =>
+      db.makeup_matches.filter(mm => mm.makeup_pool_id === makeupPoolId).sort((a, b) => b.match_score - a.match_score),
+    findBySchedule: (scheduleId: number): MakeupMatch[] =>
+      db.makeup_matches.filter(mm => mm.target_schedule_id === scheduleId),
+    insert: (data: Omit<MakeupMatch, 'id' | 'recommended_at' | 'status'> & { status?: MakeupMatch['status'] }): MakeupMatch => {
+      const match: MakeupMatch = { status: 'recommended', ...data, id: nextId('makeup_matches'), recommended_at: now() };
+      db.makeup_matches.push(match);
+      saveDatabase();
+      return match;
+    },
+    update: (id: number, data: Partial<MakeupMatch>): boolean => {
+      const idx = db.makeup_matches.findIndex(mm => mm.id === id);
+      if (idx === -1) return false;
+      db.makeup_matches[idx] = { ...db.makeup_matches[idx], ...data };
+      saveDatabase();
+      return true;
+    },
+    delete: (id: number): boolean => {
+      const idx = db.makeup_matches.findIndex(mm => mm.id === id);
+      if (idx === -1) return false;
+      db.makeup_matches.splice(idx, 1);
+      saveDatabase();
+      return true;
+    },
+    count: (filter?: (mm: MakeupMatch) => boolean): number => {
+      if (filter) return db.makeup_matches.filter(filter).length;
+      return db.makeup_matches.length;
     },
   },
 };

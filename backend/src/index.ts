@@ -14,6 +14,7 @@ import paymentsRouter from './routes/payments';
 import materialsRouter from './routes/materials';
 import materialUsagesRouter from './routes/material_usages';
 import studentWorksRouter from './routes/student_works';
+import makeupSchedulesRouter from './routes/makeup_schedules';
 
 const app = express();
 const PORT = 3002;
@@ -42,6 +43,7 @@ app.use('/api/payments', paymentsRouter);
 app.use('/api/materials', materialsRouter);
 app.use('/api/material-usages', materialUsagesRouter);
 app.use('/api/student-works', studentWorksRouter);
+app.use('/api/makeup-schedules', makeupSchedulesRouter);
 
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
