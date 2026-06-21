@@ -61,6 +61,7 @@ export default function StudentWorksPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
+  const [editModalOpen, setEditModalOpen] = useState(false);
   const [editing, setEditing] = useState<StudentWork | null>(null);
   const [filterStudentId, setFilterStudentId] = useState<number | undefined>();
   const [filterCourseId, setFilterCourseId] = useState<number | undefined>();
@@ -139,7 +140,7 @@ export default function StudentWorksPage() {
     try {
       await api.put(`/student-works/${editing?.id}`, values);
       message.success('更新成功');
-      setPreviewOpen(false);
+      setEditModalOpen(false);
       setEditing(null);
       form.resetFields();
       loadData();
@@ -272,7 +273,7 @@ export default function StudentWorksPage() {
             onClick={() => {
               setEditing(record);
               form.setFieldsValue(record);
-              setPreviewOpen(true);
+              setEditModalOpen(true);
             }}
           >
             编辑
@@ -426,7 +427,7 @@ export default function StudentWorksPage() {
                       onClick={() => {
                         setEditing(work);
                         form.setFieldsValue(work);
-                        setPreviewOpen(true);
+                        setEditModalOpen(true);
                       }}
                     />,
                     <span
@@ -539,9 +540,9 @@ export default function StudentWorksPage() {
 
       <Modal
         title="编辑作品"
-        open={previewOpen}
+        open={editModalOpen}
         onCancel={() => {
-          setPreviewOpen(false);
+          setEditModalOpen(false);
           setEditing(null);
           form.resetFields();
         }}
